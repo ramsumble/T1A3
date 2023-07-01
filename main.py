@@ -34,7 +34,8 @@ def calculate_from_csv(file_path):
                         pass
         
         calc_std = statistics.stdev(data)
-        return calc_std
+        calc_mean = statistics.mean(data)
+        return calc_std, calc_mean
 
 output_value_VA = calculate_from_csv(file_path_1)
 output_value_MX = calculate_from_csv(file_path_2)
@@ -53,7 +54,7 @@ def read_csv(file, delimiter):
         next(reader)
         data = list(reader)
         for item in reversed(data): #some reason need to reverse data to display properly 
-            if item[2] != "null": #remove null values 
+            if item[2] != "null": #ignore null values 
                 list_third_column.append(item[2])
     return list_third_column
 
@@ -69,7 +70,6 @@ try:
     print("VA score = ",calculate_from_csv(file_path_1))
     print("MX score = ",calculate_from_csv(file_path_2))
     plot_data(file_path_1)
-    plot_data(file_path_2)
 
 except Exception as error:
      print(error)
