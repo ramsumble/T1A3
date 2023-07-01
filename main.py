@@ -5,7 +5,7 @@ import os
 file_path_1 = "VA.csv"
 file_path_2 = "MX.csv"
 
-#error handling
+#error handling for missing files
 def does_file_exist(file_path):
     if os.path.exists(file_path):
         return True
@@ -24,11 +24,11 @@ def calculate_from_csv(file_path):
         
         calc_std = statistics.stdev(data)
         return calc_std
-
+    
 
 try: 
     print(calculate_from_csv(file_path_1))
     print(calculate_from_csv(file_path_2))
 except Exception as error:
-     print(str(error))
+     print(error)
 
