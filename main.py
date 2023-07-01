@@ -1,11 +1,18 @@
 import statistics
+import csv
 
-#fist work out mean from a set of numbers
-data_set = [1, 4, 5, 7, 10, 11, 2, 8, 5]
+file_path_1 = "VA.csv"
 
-mean = statistics.mean(data_set)
-std = statistics.stdev(data_set)
+def calculate_from_csv(file_path):
+    with open(file_path, 'r') as f:
+        reader = csv.reader(f)
+        reader.__next__() # Skip the headers in first row
+        data = []
+        for row in reader:
+                values = float(row[0])
+                data.append(values)
+        
+        calc_std = statistics.stdev(data)
+        return calc_std
 
-print("Mean = ", mean)
-print("Standard Dev = ", std)
-
+print(calculate_from_csv(file_path_1))
