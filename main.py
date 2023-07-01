@@ -17,11 +17,17 @@ def does_file_exist(file_path):
 def calculate_from_csv(file_path):
     with open(file_path, "r") as f: #"r" to read content of csv
         reader = csv.reader(f)
-        reader.__next__() # Skip the headers in first row
+        next(reader) # Skip the headers in first row
+        # reader.__next__() 
         data = []
         for row in reader:
-                values = float(row[0])
-                data.append(values)
+                values = row[2]
+                if values != "null":
+                    try:
+                        values = float(values)
+                        data.append(values)
+                    except ValueError:
+                        pass
         
         calc_std = statistics.stdev(data)
         return calc_std
@@ -43,3 +49,9 @@ try:
 except Exception as error:
      print(error)
 
+
+
+# TODO
+# add calc for mean
+# calc second csv 
+# add date/time 
