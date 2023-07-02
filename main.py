@@ -61,30 +61,32 @@ def read_csv(file, delimiter):
         data = list(reader)
         for item in reversed(data): #some reason need to reverse data to display properly 
             if item[2] != "null": #ignore null values 
-                list_third_column.append(item[2])
+                list_third_column.append(int(item[2]))
     return list_third_column
 
 
 def plot_data(file):
     sns.set_theme() # added a theme so the graph is a little easier to digest 
     data = read_csv(file, ",")
-    plt.plot(data)
+    x_value = range(len(data))
+    # plt.plot(data) # line graph
+    plt.bar(x_value, data)
     plt.show()
 
 try: 
-    output_csv(output_file)
-    print("VA score = ",calculate_from_csv(file_path_1))
-    print("MX score = ",calculate_from_csv(file_path_2))
-    # plot_data(file_path_1)
+    # output_csv(output_file)
+    # print("VA score = ",calculate_from_csv(file_path_1))
+    # print("MX score = ",calculate_from_csv(file_path_2))
+    plot_data(file_path_1)
 
 except Exception as error:
      print(error)
 
 
 # TODO
-# add date/time 
-# correct the output, be in seperate cells 
-# add help function if applicable
+# hav the display count the total value from a given number
+# 0 1 2 3 4 5 6 7 8 9 10 15 =>20 =>50 =>100 =>200
+# remove () from csv
 # BONUS
 # add a way to mass calculate multiple csv's of the same dataset
 # print the top outliers - need to workout is there is math behind calculating an outlier
