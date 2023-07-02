@@ -61,7 +61,7 @@ def read_csv(file, delimiter):
         reader = csv.reader(f)
         next(reader)
         data = list(reader)
-        for item in reversed(data): #some reason need to reverse data to display properly 
+        for item in data: #some reason need to reverse data to display properly 
             if item[2] != "null": #ignore null values 
                 list_third_column.append(int(item[2]))
     return list_third_column
