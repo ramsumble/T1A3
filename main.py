@@ -6,6 +6,8 @@ from scipy.stats import norm
 import numpy as np
 import seaborn as sns
 import datetime
+from collections import Counter
+
 
 file_path_1 = "VA.csv"
 file_path_2 = "MX.csv"
@@ -33,7 +35,7 @@ def calculate_from_csv(file_path):
                     except ValueError:
                         pass
         
-        calc_std = statistics.stdev(data)
+        calc_std = statistics.stdev(data) #thank you statistics for making this easy
         calc_mean = statistics.mean(data)
         return calc_std, calc_mean
 
@@ -65,13 +67,58 @@ def read_csv(file, delimiter):
     return list_third_column
 
 
+def group_up_numbers(data):
+    numbers_under_10 = Counter()
+    for number in data:
+        if number < 10:
+            numbers_under_10[number] += 1
+
+    groups = {
+        "200+": [],
+        "100+": [],
+        "50+": [],
+        "20+": [],
+        "10+": [],    
+    }
+    for number in data:
+        if number > 200:
+            groups["200+"].append(number)
+        elif number > 100:
+            groups["100+"].append(number)
+        elif number > 50:
+            groups["50+"].append(number)
+        elif number > 20:
+            groups["20+"].append(number)
+        elif number > 10:
+            groups["10+"].append(number)
+        elif number < 10:
+            numbers_under_10[number] += 1
+
+    group_counts = {}
+    for group, numbers in groups.items():
+        count = len(numbers)
+        group_counts[group] = count
+
+    group_counts.update(numbers_under_10)
+
+    return group_counts
+
+data = read_csv(file_path_1, delimiter=",")
+result = group_up_numbers(data)
+
+# grab the key values from dict for plotting
+labels = list(result.keys())
+counts = list(result.values())
+
+labels = [str(label) for label in labels] # Convert labels to strings for the bar graph
+
 def plot_data(file):
-    sns.set_theme() # added a theme so the graph is a little easier to digest 
-    data = read_csv(file, ",")
-    x_value = range(len(data))
-    # plt.plot(data) # line graph
-    plt.bar(x_value, data)
+    plt.bar(labels, counts)
+    plt.xlabel('Triggers')
+    plt.ylabel('Count')
+    plt.title('Number of triggers')
     plt.show()
+
 
 try: 
     # output_csv(output_file)
@@ -84,8 +131,7 @@ except Exception as error:
 
 
 # TODO
-# hav the display count the total value from a given number
-# 0 1 2 3 4 5 6 7 8 9 10 15 =>20 =>50 =>100 =>200
+# correct the data in graph to be in a chronological order
 # remove () from csv
 # BONUS
 # add a way to mass calculate multiple csv's of the same dataset
