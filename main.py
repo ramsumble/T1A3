@@ -28,7 +28,7 @@ def calculate_from_csv(file_path):
         data = []
         for row in reader:
                 values = row[2]
-                if values != "null":
+                if values != "null": 
                     try:
                         values = float(values)
                         data.append(values)
@@ -39,10 +39,14 @@ def calculate_from_csv(file_path):
         calc_mean = statistics.mean(data)
         return calc_std, calc_mean
 
-output_value_VA = calculate_from_csv(file_path_1)
-output_value_MX = calculate_from_csv(file_path_2)
+output_value_VA = str(calculate_from_csv(file_path_1))
+output_value_MX = str(calculate_from_csv(file_path_2))
 
-#create the csv is none exists, append the calc value to new csv
+#remove perenthesis from output
+VA_value = output_value_VA.replace('(','').replace(')','')
+MX_value = output_value_MX.replace('(','').replace(')','')
+
+#create the csv if none exists, append the calc value to new csv
 def output_csv(file_path):
     with open("output.csv", "a") as file: # "a" to append
         headerlist = ["Date","VA Std", "VA Mean", "MX Std", "MX Mean"]
@@ -51,19 +55,18 @@ def output_csv(file_path):
         if file_is_empty:
             dw = csv.DictWriter(file, delimiter=",", fieldnames=headerlist)
             dw.writeheader()
-        file.write(f"{date},{output_value_VA},{output_value_MX}\n")#write() can only write strings - not sure if there is a better way
+        file.write(f"{date},{VA_value},{MX_value}\n")#write() can only write strings - not sure if there is a better way
     return file_path
-
 
 def read_csv(file, delimiter):
     list_third_column = []
     with open(file, newline='') as f:
         reader = csv.reader(f)
-        next(reader)
+        next(reader) # skip header
         data = list(reader)
-        for item in data: #some reason need to reverse data to display properly 
+        for item in data: 
             if item[2] != "null": #ignore null values 
-                list_third_column.append(int(item[2]))
+                list_third_column.append(int(item[2])) 
     return list_third_column
 
 
@@ -83,14 +86,14 @@ def group_up_numbers(data):
     for number in data:
         if number > 200:
             groups["200+"].append(number)
-        elif number > 100:
+        elif number >= 100:
             groups["100+"].append(number)
-        elif number > 50:
+        elif number >= 50:
             groups["50+"].append(number)
-        elif number > 20:
+        elif number >= 20:
             groups["20+"].append(number)
-        elif number > 10:
-            groups["10+"].append(number)
+        elif number >= 10:
+            groups["10"].append(number)
         elif number < 10:
             numbers_under_10[number] += 1
 
@@ -121,9 +124,9 @@ def plot_data(file):
 
 
 try: 
-    # output_csv(output_file)
-    # print("VA score = ",calculate_from_csv(file_path_1))
-    # print("MX score = ",calculate_from_csv(file_path_2))
+    output_csv(output_file)
+    print("VA score = ",calculate_from_csv(file_path_1))
+    print("MX score = ",calculate_from_csv(file_path_2))
     plot_data(file_path_1)
 
 except Exception as error:
@@ -131,8 +134,7 @@ except Exception as error:
 
 
 # TODO
-# correct the data in graph to be in a chronological order
-# remove () from csv
+# combine both dicts so they can be displayed a single bar graph 
 # BONUS
 # add a way to mass calculate multiple csv's of the same dataset
 # print the top outliers - need to workout is there is math behind calculating an outlier
