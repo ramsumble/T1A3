@@ -96,7 +96,7 @@ def group_up_numbers(data):
             groups["20+"].append(number)
         elif number >= 10:
             groups["10+"].append(number)
-        elif number < 10:
+        elif number < 10: # this will append as an int!
             numbers_under_10[number] += 1
 
     group_counts = {}
@@ -112,6 +112,7 @@ group_va = group_up_numbers(va_data)
 group_mx = group_up_numbers(mx_data)
 
 def combine_data_into_dict(va_dict, mx_dict):
+    #had to correct dict as the for loop in group_up_numbers will create the Keys as integers
     combined_dict = {
         "200+": [0, 0],
         "100+": [0, 0],
@@ -131,47 +132,106 @@ def combine_data_into_dict(va_dict, mx_dict):
     }
 
     for k, v in va_dict.items():
-        combined_dict[k][0] = v
+        combined_dict[k][0] = v # add to the first key index
 
     for k, v in mx_dict.items():
-        combined_dict[k][1] = v
+        combined_dict[k][1] = v # add to the second key index
 
     return combined_dict
 
+# graphs information was all sourced from https://python-graph-gallery.com/
 
+# https://python-graph-gallery.com/grouped-barplot/ 
 def create_bar_graph(combined_dict):
+    #styling with Seaborn
+    colors = ["#69b3a2", "#4374B3"]
+    sns.set_palette(sns.color_palette(colors))
+    sns.set(style="darkgrid")
+
+    
     labels = combined_dict.keys()
     values_va = [item[0] for item in combined_dict.values()]
     values_mx = [item[1] for item in combined_dict.values()]
    
     x = np.arange(len(labels))
-    width = 0.4
+    width = 0.4 # width of bars 
 
     fig, ax = plt.subplots()
     rects1 = ax.bar(x - width/2, values_va, width, label='VA Data')
     rects2 = ax.bar(x + width/2, values_mx, width, label='MX Data')
 
-    ax.set_xlabel('Categories')
-    ax.set_ylabel('Counts')
-    ax.set_title('Combined Data')
-    ax.set_xticks(x)
-    ax.set_xticklabels(labels)
+    ax.set_xlabel('Triggers')
+    ax.set_ylabel('Count')
+    ax.set_title('VA vs MX')
+    ax.set_xticks(x) # used together for labelling the x axis
+    ax.set_xticklabels(labels) # used together for labelling the x axis
     ax.legend()
 
     plt.show()
 
-combined_dict = combine_data_into_dict(group_va, group_mx)
+# https://python-graph-gallery.com/line-chart/
+def create_line_graph(combined_dict):
+    #styling with Seaborn
+    colors = ["#69b3a2", "#4374B3"]
+    sns.set_palette(sns.color_palette(colors))
+    sns.set(style="darkgrid")
 
+    labels = combined_dict.keys()
+    values_va = [item[0] for item in combined_dict.values()]
+    values_mx = [item[1] for item in combined_dict.values()]
+    
+    x = np.arange(len(labels))
+
+    fig, ax = plt.subplots()
+    ax.plot(values_va, label='VA Data')
+    ax.plot(values_mx, label='MX Data')
+
+    ax.set_xlabel('Triggers')
+    ax.set_ylabel('Count')
+    ax.set_title('VA vs MX')
+    ax.set_xticks(x) # used together for labelling the x axis
+    ax.set_xticklabels(labels) # used together for labelling the x axis
+    ax.legend()
+
+    plt.show()
+
+# # https://python-graph-gallery.com/boxplot/
+# box plot doesnt seem feasible with current datasets 
+# def create_box_plot(combined_dict):
+#     sns.set(style="darkgrid")
+
+#     # data_va = [item[0] for item in combined_dict.values()]
+#     # data_mx = [item[1] for item in combined_dict.values()]
+
+#     data = [va_data, mx_data]
+#     labels = ['VA Data', 'MX Data']
+
+#     sns.boxplot(data=data) # crazy easy with seaborn!
+#     plt.xlabel('Triggers')
+#     plt.ylabel('Count')
+#     plt.title('VA vs MX')
+
+#     plt.show()    
+
+
+combined_dict = combine_data_into_dict(group_va, group_mx)
+    
 
 try: 
     output_csv(output_file)
     print("VA score = ",calculate_from_csv(file_path_1))
     print("MX score = ",calculate_from_csv(file_path_2))
+    # create_line_graph(combined_dict)
     create_bar_graph(combined_dict)
+    # create_box_plot(va_data) # we dont want to measure the consolidated data with the box plot
 
 except Exception as error:
      print(error)
 
 
 # TODO
-# create line graph with combined data
+# create user prompt to select which graph to display
+# check to see if error handling can be improved
+# re-arrange/clean up code to make more readable
+# do something fun with the output
+# maybe implement --help features
