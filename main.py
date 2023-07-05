@@ -69,6 +69,8 @@ def read_csv(file, delimiter):
                 list_third_column.append(int(item[2])) 
     return list_third_column
 
+va_data = read_csv(file_path_1, ",")
+mx_data = read_csv(file_path_2, ",")
 
 def group_up_numbers(data):
     numbers_under_10 = Counter()
@@ -93,7 +95,7 @@ def group_up_numbers(data):
         elif number >= 20:
             groups["20+"].append(number)
         elif number >= 10:
-            groups["10"].append(number)
+            groups["10+"].append(number)
         elif number < 10:
             numbers_under_10[number] += 1
 
@@ -106,35 +108,70 @@ def group_up_numbers(data):
 
     return group_counts
 
-data = read_csv(file_path_1, delimiter=",")
-result = group_up_numbers(data)
+group_va = group_up_numbers(va_data)
+group_mx = group_up_numbers(mx_data)
 
-# grab the key values from dict for plotting
-labels = list(result.keys())
-counts = list(result.values())
+def combine_data_into_dict(va_dict, mx_dict):
+    combined_dict = {
+        "200+": [0, 0],
+        "100+": [0, 0],
+        "50+": [0, 0],
+        "20+": [0, 0],
+        "10+": [0, 0],
+        9: [0, 0],
+        8: [0, 0],
+        7: [0, 0],
+        6: [0, 0],
+        5: [0, 0],
+        4: [0, 0],
+        3: [0, 0],
+        2: [0, 0],
+        1: [0, 0],
+        0: [0, 0]
+    }
 
-labels = [str(label) for label in labels] # Convert labels to strings for the bar graph
+    for k, v in va_dict.items():
+        combined_dict[k][0] = v
 
-def plot_data(file):
-    plt.bar(labels, counts)
-    plt.xlabel('Triggers')
-    plt.ylabel('Count')
-    plt.title('Number of triggers')
+    for k, v in mx_dict.items():
+        combined_dict[k][1] = v
+
+    return combined_dict
+
+
+def create_bar_graph(combined_dict):
+    labels = combined_dict.keys()
+    values_va = [item[0] for item in combined_dict.values()]
+    values_mx = [item[1] for item in combined_dict.values()]
+   
+    x = np.arange(len(labels))
+    width = 0.4
+
+    fig, ax = plt.subplots()
+    rects1 = ax.bar(x - width/2, values_va, width, label='VA Data')
+    rects2 = ax.bar(x + width/2, values_mx, width, label='MX Data')
+
+    ax.set_xlabel('Categories')
+    ax.set_ylabel('Counts')
+    ax.set_title('Combined Data')
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
     plt.show()
+
+combined_dict = combine_data_into_dict(group_va, group_mx)
 
 
 try: 
     output_csv(output_file)
     print("VA score = ",calculate_from_csv(file_path_1))
     print("MX score = ",calculate_from_csv(file_path_2))
-    plot_data(file_path_1)
+    create_bar_graph(combined_dict)
 
 except Exception as error:
      print(error)
 
 
 # TODO
-# combine both dicts so they can be displayed a single bar graph 
-# BONUS
-# add a way to mass calculate multiple csv's of the same dataset
-# print the top outliers - need to workout is there is math behind calculating an outlier
+# create line graph with combined data
