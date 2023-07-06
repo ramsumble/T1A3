@@ -14,12 +14,6 @@ file_path_1 = "VA.csv"
 file_path_2 = "MX.csv"
 output_file = "output.csv"
 
-try:
-    user_input = input(cowsay.cow(("\n Which graph would you like to display? \n For the Line graph: Line \n For the Bar graph: Bar\n"))) # need to fix user_input on interupt
-    output = cowsay.cow(f"you have selected: {user_input}")
-except KeyboardInterrupt:
-    print("\nKeyboardIntterupt!")
-    print(cowsay.cow("Goodbye!"))
 
 #error handling for missing files
 def does_file_exist(file_path):
@@ -47,12 +41,6 @@ def calculate_from_csv(file_path):
         calc_mean = statistics.mean(data)
         return calc_std, calc_mean
 
-output_value_VA = str(calculate_from_csv(file_path_1))
-output_value_MX = str(calculate_from_csv(file_path_2))
-
-#remove perenthesis from output
-VA_value = output_value_VA.replace('(','').replace(')','')
-MX_value = output_value_MX.replace('(','').replace(')','')
 
 #create the csv if none exists, append the calc value to new csv
 def output_csv(file_path):
@@ -66,6 +54,7 @@ def output_csv(file_path):
         file.write(f"{date},{VA_value},{MX_value}\n")#write() can only write strings - not sure if there is a better way
     return file_path
 
+
 def read_csv(file, delimiter):
     list_third_column = []
     with open(file, newline='') as f:
@@ -77,8 +66,6 @@ def read_csv(file, delimiter):
                 list_third_column.append(int(item[2])) 
     return list_third_column
 
-va_data = read_csv(file_path_1, ",")
-mx_data = read_csv(file_path_2, ",")
 
 def group_up_numbers(data):
     numbers_under_10 = Counter()
@@ -116,8 +103,6 @@ def group_up_numbers(data):
 
     return group_counts
 
-group_va = group_up_numbers(va_data)
-group_mx = group_up_numbers(mx_data)
 
 def combine_data_into_dict(va_dict, mx_dict):
     #had to correct dict as the for loop in group_up_numbers will create the Keys as integers
@@ -221,7 +206,30 @@ def create_line_graph(combined_dict):
 
 #     plt.show()    
 
+try:
+    user_input = input(cowsay.cow(("\n Which graph would you like to display? \n For the Line graph: Line \n For the Bar graph: Bar\n"))) # need to fix user_input on interupt
+    output = cowsay.cow(f"you have selected: {user_input}")
+except KeyboardInterrupt:
+    print("\nKeyboardIntterupt!")
+    print(cowsay.cow("Goodbye!"))
 
+# store the output of calculate_from_csv into variables
+output_value_VA = str(calculate_from_csv(file_path_1))
+output_value_MX = str(calculate_from_csv(file_path_2))
+
+# remove perenthesis from output which will be appended to output.csv
+VA_value = output_value_VA.replace('(','').replace(')','')
+MX_value = output_value_MX.replace('(','').replace(')','')
+
+# get only the relevant data from csv's
+va_data = read_csv(file_path_1, ",")
+mx_data = read_csv(file_path_2, ",")
+
+# group data into dictionaries
+group_va = group_up_numbers(va_data)
+group_mx = group_up_numbers(mx_data)
+
+# combine the dictionaries into a single dict for graphs 
 combined_dict = combine_data_into_dict(group_va, group_mx)
     
 
