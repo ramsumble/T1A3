@@ -7,11 +7,19 @@ import numpy as np
 import seaborn as sns
 import datetime
 from collections import Counter
+import cowsay
 
 
 file_path_1 = "VA.csv"
 file_path_2 = "MX.csv"
 output_file = "output.csv"
+
+try:
+    user_input = input(cowsay.cow(("\n Which graph would you like to display? \n For the Line graph: Line \n For the Bar graph: Bar\n"))) # need to fix user_input on interupt
+    output = cowsay.cow(f"you have selected: {user_input}")
+except KeyboardInterrupt:
+    print("\nKeyboardIntterupt!")
+    print(cowsay.cow("Goodbye!"))
 
 #error handling for missing files
 def does_file_exist(file_path):
@@ -32,8 +40,8 @@ def calculate_from_csv(file_path):
                     try:
                         values = float(values)
                         data.append(values)
-                    except ValueError:
-                        pass
+                    except ValueError: #error handling for non numberic values
+                        print(f"There is a value in {file_path} that is not vaild, value ignored")
         
         calc_std = statistics.stdev(data) #thank you statistics for making this easy
         calc_mean = statistics.mean(data)
@@ -217,21 +225,23 @@ def create_line_graph(combined_dict):
 combined_dict = combine_data_into_dict(group_va, group_mx)
     
 
-try: 
+try:
     output_csv(output_file)
     print("VA score = ",calculate_from_csv(file_path_1))
     print("MX score = ",calculate_from_csv(file_path_2))
-    # create_line_graph(combined_dict)
-    create_bar_graph(combined_dict)
     # create_box_plot(va_data) # we dont want to measure the consolidated data with the box plot
-
-except Exception as error:
-     print(error)
+    if user_input == "Line":
+        create_line_graph(combined_dict)
+    elif user_input == "Bar":
+        create_bar_graph(combined_dict)
+    else:
+        raise ValueError("Invalid input, please enter either L or B ")   
+except ValueError as v_Error:
+    print(v_Error)
+except Exception as e_error:
+    print(e_error)
 
 
 # TODO
-# create user prompt to select which graph to display
 # check to see if error handling can be improved
-# re-arrange/clean up code to make more readable
-# do something fun with the output
 # maybe implement --help features
