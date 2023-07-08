@@ -165,7 +165,7 @@ def create_bar_graph(combined_dict):
     ax.set_xticklabels(labels) # used together for labelling the x axis
     ax.legend()
     
-    plt.savefig('figure.png') 
+    plt.savefig('Bar.png') 
     plt.show() # not compatible with the venv
 
 # https://python-graph-gallery.com/line-chart/
@@ -192,7 +192,7 @@ def create_line_graph(combined_dict):
     ax.set_xticklabels(labels) # used together for labelling the x axis
     ax.legend()
 
-    plt.savefig('figure.png')  
+    plt.savefig('Line.png')  
     plt.show() # not compatible with the venv
 
 # # https://python-graph-gallery.com/boxplot/
@@ -215,7 +215,8 @@ def create_line_graph(combined_dict):
 
 try:
     user_input = input(cowsay.cow(("\n Which graph would you like to display? \n For the Line graph: Line \n For the Bar graph: Bar\n"))) # need to fix user_input on interupt
-    output = cowsay.cow(f"you have selected: {user_input}")
+    user_input2 = input(cowsay.cow(("\n Would you like to see the score in the output? \nYes/No "))) # need to fix user_input on interupt
+    output = cowsay.cow(f"you have selected: \n{user_input} \n{user_input2}")
 except KeyboardInterrupt:
     print("\nKeyboardIntterupt!")
     print(cowsay.cow("Goodbye!"))
@@ -242,15 +243,20 @@ combined_dict = combine_data_into_dict(group_va, group_mx)
 
 try:
     output_csv(output_file)
-    print("VA score = ",calculate_from_csv(file_path_1))
-    print("MX score = ",calculate_from_csv(file_path_2))
     # create_box_plot(va_data) # we dont want to measure the consolidated data with the box plot
     if user_input == "Line":
         create_line_graph(combined_dict)
     elif user_input == "Bar":
         create_bar_graph(combined_dict)
     else:
-        raise ValueError("Invalid input, please enter either L or B ")   
+        raise ValueError("Invalid input, please enter either Line or Bar")  
+    if user_input2 == "Yes":
+        print("VA score = ",calculate_from_csv(file_path_1))
+        print("MX score = ",calculate_from_csv(file_path_2))
+    elif user_input2 == "No":
+        print(cowsay.cow("Goodbye!"))
+    else:
+        raise ValueError("Please enter either Yes or No")
 except ValueError as v_Error:
     print(v_Error)
 except Exception as e_error:
