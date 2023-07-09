@@ -68,7 +68,10 @@ def read_csv(file, delimiter):
         data = list(reader)
         for item in data: 
             if item[2] != "null": #ignore null values 
-                list_third_column.append(int(item[2])) 
+                try:
+                    list_third_column.append(int(item[2])) 
+                except ValueError: #error handling for non numberic values
+                    print(f"There is a value in {file} that is not vaild, value ignored")
     return list_third_column
 
 
